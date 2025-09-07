@@ -1,0 +1,4 @@
+OS2.0.216.0.WNNMIXM
+https://bigota.d.miui.com/OS2.0.216.0.WNNMIXM/rothko_global_images_OS2.0.216.0.WNNMIXM_20250718.0000.00_16.0_global_011aa9964e.tgz
+https://hugeota.d.miui.com/OS2.0.216.0.WNNMIXM/rothko_global_images_OS2.0.216.0.WNNMIXM_20250718.0000.00_16.0_global_011aa9964e.tgz
+https://bn.d.miui.com/OS2.0.216.0.WNNMIXM/rothko_global_images_OS2.0.216.0.WNNMIXM_20250718.0000.00_16.0_global_011aa9964e.tgz
