@@ -1,0 +1,4 @@
+OS2.0.3.0.VNNMIDC
+https://bigota.d.miui.com/OS2.0.3.0.VNNMIDC/rothko_dc_global_images_OS2.0.3.0.VNNMIDC_20241226.0000.00_15.0_global_dc_6248adf0c4.tgz
+https://hugeota.d.miui.com/OS2.0.3.0.VNNMIDC/rothko_dc_global_images_OS2.0.3.0.VNNMIDC_20241226.0000.00_15.0_global_dc_6248adf0c4.tgz
+https://bn.d.miui.com/OS2.0.3.0.VNNMIDC/rothko_dc_global_images_OS2.0.3.0.VNNMIDC_20241226.0000.00_15.0_global_dc_6248adf0c4.tgz
