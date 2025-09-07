@@ -1,0 +1,147 @@
+name: 'Rothko Firmware Dumper'
+
+on:
+  push:
+    paths:
+      - 'firmware_updates/**.txt'
+  
+  workflow_dispatch:
+
+jobs:
+  process_firmware_files:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      matrix:
+        region: [cn, global, ru, id, eea, tw, tr, jp, global_dc]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y aria2 tree
+
+      - name: Read Firmware Info and Select Fastest URL
+        id: firmware_info
+        run: |
+          FILE_PATH="firmware_updates/${{ matrix.region }}.txt"
+          if [ ! -f "$FILE_PATH" ]; then
+            echo "File for region ${{ matrix.region }} not found. Skipping."
+            exit 0
+          fi
+          
+          VERSION=$(sed -n '1p' "$FILE_PATH" | tr -d '[:space:]')
+          DOWNLOAD_URLS=($(sed '1d' "$FILE_PATH"))
+
+          if [ ${#DOWNLOAD_URLS[@]} -eq 0 ]; then
+             echo "ERROR: No download URLs found in ${FILE_PATH}."
+             exit 1
+          elif [ ${#DOWNLOAD_URLS[@]} -eq 1 ]; then
+             FASTEST_URL="${DOWNLOAD_URLS[0]}"
+             echo "Only one URL found. Skipping speed-test."
+          else
+             echo "Multiple URLs found. Starting speed-test..."
+             FASTEST_URL=""
+             MAX_SPEED=0
+             MAX_TEST_TIME=5
+             TEST_SIZE_BYTES=10485760
+
+             for URL in "${DOWNLOAD_URLS[@]}"; do
+                echo "Testing URL: $URL (Timeout: ${MAX_TEST_TIME}s, Size: 10MB)"
+                SPEED=$(curl -L --connect-timeout 5 --max-time $MAX_TEST_TIME --range 0-$TEST_SIZE_BYTES -s -o /dev/null -w "%{speed_download}" "$URL" | cut -d'.' -f1)
+                
+                if [ -z "$SPEED" ] || [ "$SPEED" -eq 0 ]; then
+                  echo "Test failed, timed out, or speed was 0. Skipping this URL."
+                  continue
+                fi
+
+                SPEED_MBPS=$(awk -v speed_bps="$SPEED" 'BEGIN { printf "%.2f", speed_bps * 8 / 1024 / 1024 }')
+                echo "Result: ${SPEED_MBPS} Mbps"
+
+                if (( SPEED > MAX_SPEED )); then
+                   MAX_SPEED=$SPEED
+                   FASTEST_URL=$URL
+                fi
+             done
+          fi
+
+          if [ -z "$FASTEST_URL" ]; then
+            echo "ERROR: Could not determine the fastest URL. All speed-tests may have failed."
+            exit 1
+          fi
+
+          echo "Fastest URL selected: ${FASTEST_URL}"
+          FILENAME=$(basename "${FASTEST_URL}")
+
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          echo "FILENAME=${FILENAME}" >> $GITHUB_OUTPUT
+          echo "DOWNLOAD_URL=${FASTEST_URL}" >> $GITHUB_OUTPUT
+          echo "DATA_FOUND=true" >> $GITHUB_OUTPUT
+
+      - name: Check if Release Already Exists
+        if: steps.firmware_info.outputs.DATA_FOUND == 'true'
+        id: check_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="v${{ steps.firmware_info.outputs.VERSION }}-${{ matrix.region }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists. Stopping."
+            echo "IS_NEW=false" >> $GITHUB_OUTPUT
+          else
+            echo "Release ${TAG} is new. Proceeding."
+            echo "IS_NEW=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download and Extract Firmware
+        if: steps.check_release.outputs.IS_NEW == 'true'
+        run: |
+          echo "Downloading ${{ steps.firmware_info.outputs.FILENAME }} with aria2..."
+          aria2c -x 16 -s 16 -k 1M -o "${{ steps.firmware_info.outputs.FILENAME }}" "${{ steps.firmware_info.outputs.DOWNLOAD_URL }}"
+          echo "Extracting files..."
+          mkdir -p extracted_firmware
+          tar -xvf "${{ steps.firmware_info.outputs.FILENAME }}" -C extracted_firmware
+          find extracted_firmware -type f -size +2000M | while read -r file; do
+            echo "Splitting large file: $file"
+            split -b 2000M "$file" "$file.part-"
+            rm -f "$file"
+          done
+
+      - name: Create GitHub Release and Upload Files
+        if: steps.check_release.outputs.IS_NEW == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          VERSION="${{ steps.firmware_info.outputs.VERSION }}"
+          REGION_UPPER=$(echo "${{ matrix.region }}" | tr 'a-z' 'A-Z')
+          TAG="v${VERSION}-${{ matrix.region }}"
+          
+          tree -F extracted_firmware > extracted_firmware/file_structure.txt
+          
+          TOTAL_SIZE=$(du -sh extracted_firmware | awk '{print $1}')
+          FILE_COUNT=$(find extracted_firmware -type f | wc -l)
+          DUMP_DATE=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          RELEASE_NOTES=$(cat <<EOF
+          - **Total Size:** ${TOTAL_SIZE}
+          - **File Count:** ${FILE_COUNT}
+          - **Dump Date:** ${DUMP_DATE}
+
+          Downloaded from: ${{ steps.firmware_info.outputs.DOWNLOAD_URL }}
+
+          ---
+          A complete file list and directory structure is available in the \`file_structure.txt\` asset attached below.
+          EOF
+          )
+
+          echo "Creating release with tag: ${TAG}"
+          gh release create "$TAG" \
+            --title "${VERSION} [${REGION_UPPER}]" \
+            --notes "$RELEASE_NOTES" \
+            $(find extracted_firmware -type f)
+
+
