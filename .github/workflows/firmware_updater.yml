@@ -98,6 +98,7 @@ jobs:
           fi
 
       - name: Free up disk space on runner
+        if: steps.check_release.outputs.IS_NEW == 'true'
         run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /usr/local/lib/android
