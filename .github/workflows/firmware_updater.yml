@@ -10,7 +10,7 @@ on:
 jobs:
   process_firmware_files:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
 
     strategy:
       matrix:
@@ -24,21 +24,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y aria2 tree
-
-      - name: Free up disk space on runner
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          sudo rm -rf /opt/hostedtoolcache/go
-          sudo rm -rf /opt/hostedtoolcache/Python
-          sudo rm -rf /opt/hostedtoolcache/Ruby
-          sudo rm -rf /opt/hostedtoolcache/Java
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-          docker rmi $(docker images -q) || true
-          sudo apt-get clean
-          sudo rm -rf /var/lib/apt/lists/*
 
       - name: Read Firmware Info and Select Fastest URL
         id: firmware_info
@@ -111,6 +96,21 @@ jobs:
             echo "Release ${TAG} is new. Proceeding."
             echo "IS_NEW=true" >> $GITHUB_OUTPUT
           fi
+
+      - name: Free up disk space on runner
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /opt/hostedtoolcache/go
+          sudo rm -rf /opt/hostedtoolcache/Python
+          sudo rm -rf /opt/hostedtoolcache/Ruby
+          sudo rm -rf /opt/hostedtoolcache/Java
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          docker rmi $(docker images -q) || true
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
 
       - name: Download and Extract Firmware
         if: steps.check_release.outputs.IS_NEW == 'true'
