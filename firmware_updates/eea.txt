@@ -1,4 +1,4 @@
-OS2.0.222.0.WNNEUXM
-https://bigota.d.miui.com/OS2.0.222.0.WNNEUXM/rothko_eea_global_images_OS2.0.222.0.WNNEUXM_20250829.0000.00_16.0_eea_038e888219.tgz
-https://hugeota.d.miui.com/OS2.0.222.0.WNNEUXM/rothko_eea_global_images_OS2.0.222.0.WNNEUXM_20250829.0000.00_16.0_eea_038e888219.tgz
-https://bn.d.miui.com/OS2.0.222.0.WNNEUXM/rothko_eea_global_images_OS2.0.222.0.WNNEUXM_20250829.0000.00_16.0_eea_038e888219.tgz
+OS2.0.225.0.WNNEUXM
+https://bigota.d.miui.com/OS2.0.225.0.WNNEUXM/rothko_eea_global_images_OS2.0.225.0.WNNEUXM_20250928.0000.00_16.0_eea_cfa198949a.tgz
+https://hugeota.d.miui.com/OS2.0.225.0.WNNEUXM/rothko_eea_global_images_OS2.0.225.0.WNNEUXM_20250928.0000.00_16.0_eea_cfa198949a.tgz
+https://bn.d.miui.com/OS2.0.225.0.WNNEUXM/rothko_eea_global_images_OS2.0.225.0.WNNEUXM_20250928.0000.00_16.0_eea_cfa198949a.tgz
