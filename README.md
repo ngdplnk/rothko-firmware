@@ -4,7 +4,7 @@ This repository contains extracted Fastboot firmware files for the Redmi K70 Ult
 
 ## How to Find Your Firmware
 
-All firmware files are available on the **[Releases](https://github.com/ngdplnk/rothko-firmware/releases)** page of this repository.
+All firmware files are available on the **[Releases](https://github.com/nicodotgit/rothko-firmware/releases)** page of this repository.
 
 Each release is tagged by its version and region code (e.g., `vOS2.0.208.0.VNNCNXM-cn`). You can download individual files directly from the "Assets" section of each release.
 

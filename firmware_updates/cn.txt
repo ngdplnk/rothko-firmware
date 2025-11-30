@@ -1,4 +1,4 @@
-OS2.0.210.0.VNNCNXM
-https://bigota.d.miui.com/OS2.0.210.0.VNNCNXM/rothko_images_OS2.0.210.0.VNNCNXM_20250918.0000.00_15.0_cn_5db861a8d8.tgz
-https://hugeota.d.miui.com/OS2.0.210.0.VNNCNXM/rothko_images_OS2.0.210.0.VNNCNXM_20250918.0000.00_15.0_cn_5db861a8d8.tgz
-https://bn.d.miui.com/OS2.0.210.0.VNNCNXM/rothko_images_OS2.0.210.0.VNNCNXM_20250918.0000.00_15.0_cn_5db861a8d8.tgz
+OS3.0.3.0.WNNCNXM
+https://bigota.d.miui.com/OS3.0.3.0.WNNCNXM/rothko_images_OS3.0.3.0.WNNCNXM_20251107.0000.00_16.0_cn_1909e51601.tgz
+https://hugeota.d.miui.com/OS3.0.3.0.WNNCNXM/rothko_images_OS3.0.3.0.WNNCNXM_20251107.0000.00_16.0_cn_1909e51601.tgz
+https://bn.d.miui.com/OS3.0.3.0.WNNCNXM/rothko_images_OS3.0.3.0.WNNCNXM_20251107.0000.00_16.0_cn_1909e51601.tgz
